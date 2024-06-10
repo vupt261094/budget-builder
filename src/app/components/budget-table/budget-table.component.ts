@@ -73,6 +73,12 @@ export class BudgetTableComponent implements OnInit {
       { name: '', values: Array(this.months().length).fill(0) },
     ];
     this.incomeCategories.set([...this.incomeCategories(), ...newCategory]);
+
+    setTimeout(() => {
+      this.handleFocusCategoryInput(
+        `#category-income-${this.incomeCategories().length - 1}-0`
+      );
+    })
   }
 
   addExpensesCategory() {
@@ -80,6 +86,12 @@ export class BudgetTableComponent implements OnInit {
       { name: '', values: Array(this.months().length).fill(0) },
     ];
     this.expensesCategories.set([...this.expensesCategories(), ...newCategory]);
+
+    setTimeout(() => {
+      this.handleFocusCategoryInput(
+        `#category-expenses-${this.expensesCategories().length - 1}-0`
+      );
+    })
   }
 
   deleteIncomeCategory(index: number) {
@@ -182,18 +194,22 @@ export class BudgetTableComponent implements OnInit {
   handleEnterIncome(rowIdx: number, colIdx: number) {
     if (rowIdx === this.incomeCategories().length - 1) {
       this.addIncomeCategory();
+    } else {
+      this.handleFocusCategoryInput(
+        `#category-income-${rowIdx + 1}-${colIdx + 1}`
+      );
     }
-    this.handleFocusCategoryInput(
-      `#category-income-${rowIdx + 1}-${colIdx + 1}`
-    );
+    
   }
 
   handleEnterExpenses(rowIdx: number, colIdx: number) {
     if (rowIdx === this.expensesCategories().length - 1) {
       this.addExpensesCategory();
+    } else {
+      this.handleFocusCategoryInput(
+        `#category-expenses-${rowIdx + 1}-${colIdx + 1}`
+      );
     }
-    this.handleFocusCategoryInput(
-      `#category-expenses-${rowIdx + 1}-${colIdx + 1}`
-    );
+    
   }
 }
