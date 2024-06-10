@@ -1,0 +1,196 @@
+@if (startDate && endDate) {
+<div class="overflow-x-auto">
+  <table class="min-w-full bg-white">
+    <thead>
+      <tr>
+        <th class="border px-4 py-2">Start Period V End Period V</th>
+        <th *ngFor="let month of months()" class="border px-4 py-2">
+          {{ month }}
+        </th>
+        <th class="border px-4 py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td
+          class="border px-4 py-2"
+          [attr.colspan]="(months()?.length || 0) + 2"
+        >
+          <b>Income</b>
+        </td>
+      </tr>
+      <tr *ngFor="let category of incomeCategories(); let i = index">
+        <td class="border relative">
+          <input
+            [(ngModel)]="category.name"
+            class="w-full border-0 absolute inset-0 px-4"
+            (keydown.enter)="handleEnterIncome(i, -1)"
+            id="category-income-{{ i }}-0"
+          />
+        </td>
+        <td
+          *ngFor="let month of months(); let j = index"
+          class="border relative"
+        >
+          <input
+            [(ngModel)]="category.values[j]"
+            (ngModelChange)="onIncomeValueChange()"
+            (keydown)="handleTabIncome($event, j, i)"
+            (keydown.enter)="handleEnterIncome(i, j)"
+            id="category-income-{{ i }}-{{ j + 1 }}"
+            class="w-full border-0 absolute inset-0 px-4"
+            type="number"
+            [contextMenu]="contextMenu"
+          />
+
+          <context-menu #contextMenu>
+            <ng-template contextMenuItem>
+              <div
+                class="menu-item-title"
+                (click)="applyToAllIncome(j, category.values[j])"
+              >
+                Apply to all
+              </div>
+            </ng-template>
+          </context-menu>
+        </td>
+        <td class="border px-4 py-2">
+          <button
+            (click)="deleteIncomeCategory(i)"
+            class="bg-red-500 text-white px-4 py-2 rounded"
+            tabindex="-1"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td
+          class="border px-4 py-2"
+          [attr.colspan]="(months()?.length || 0) + 2"
+        >
+          <a class="underline cursor-pointer" (click)="addIncomeCategory()"
+            >Add new 'Income' category</a
+          >
+        </td>
+      </tr>
+      <tr>
+        <td class="border px-4 py-2 font-bold">Income Total</td>
+        <td
+          *ngFor="let total of totalIncome()"
+          class="border px-4 py-2 font-bold"
+        >
+          {{ total }}
+        </td>
+        <td class="border px-4 py-2"></td>
+      </tr>
+      <tr>
+        <td
+          class="border px-4 py-2"
+          [attr.colspan]="(months()?.length || 0) + 2"
+        >
+          <b>Expenses</b>
+        </td>
+      </tr>
+      <tr *ngFor="let category of expensesCategories(); let i = index">
+        <td class="border relative">
+          <input
+            [(ngModel)]="category.name"
+            class="w-full border-0 absolute inset-0 px-4"
+            (keydown.enter)="handleEnterExpenses(i, -1)"
+            id="category-expenses-{{ i }}-0"
+          />
+        </td>
+        <td
+          *ngFor="let month of months(); let j = index"
+          class="border relative"
+        >
+          <input
+            [(ngModel)]="category.values[j]"
+            (ngModelChange)="onExpensesValueChange()"
+            (keydown)="handleTabExpenses($event, j, i)"
+            (keydown.enter)="handleEnterExpenses(i, j)"
+            class="w-full border-0 absolute inset-0 px-4"
+            id="category-expenses-{{ i }}-{{ j + 1 }}"
+            type="number"
+            [contextMenu]="contextMenu"
+          />
+
+          <context-menu #contextMenu>
+            <ng-template contextMenuItem>
+              <div
+                class="menu-item-title"
+                (click)="applyToAllExpenses(j, category.values[j])"
+              >
+                Apply to all
+              </div>
+            </ng-template>
+          </context-menu>
+        </td>
+        <td class="border px-4 py-2">
+          <button
+            (click)="deleteExpensesCategory(i)"
+            class="bg-red-500 text-white px-4 py-2 rounded"
+            tabindex="-1"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td
+          class="border px-4 py-2"
+          [attr.colspan]="(months()?.length || 0) + 2"
+        >
+          <a class="underline cursor-pointer" (click)="addExpensesCategory()"
+            >Add new 'Expenses' category</a
+          >
+        </td>
+      </tr>
+      <tr>
+        <td class="border px-4 py-2 font-bold">Total Expenses</td>
+        <td
+          *ngFor="let total of totalExpenses()"
+          class="border px-4 py-2 font-bold"
+        >
+          {{ total }}
+        </td>
+        <td class="border px-4 py-2"></td>
+      </tr>
+      <tr>
+        <td class="border px-4 py-2 font-bold">Profit / Loss</td>
+        <td
+          *ngFor="let month of months(); let i = index"
+          class="border px-4 py-2 font-bold"
+        >
+          {{ totalIncome()[i] - totalExpenses()[i] }}
+        </td>
+        <td class="border px-4 py-2"></td>
+      </tr>
+      <tr>
+        <td class="border px-4 py-2 font-bold">Opening balance</td>
+        <td
+          *ngFor="let month of months(); let i = index"
+          class="border px-4 py-2 font-bold"
+        >
+          {{ totalIncome()[i - 1] - totalExpenses()[i - 1] || 0 }}
+        </td>
+        <td class="border px-4 py-2"></td>
+      </tr>
+      <tr>
+        <td class="border px-4 py-2 font-bold">Closing balance</td>
+        <td
+          *ngFor="let month of months(); let i = index"
+          class="border px-4 py-2 font-bold"
+        >
+          {{
+            (totalIncome()[i] - totalExpenses()[i] || 0) +
+              ((totalIncome()[i - 1] || 0) - (totalExpenses()[i - 1] || 0))
+          }}
+        </td>
+        <td class="border px-4 py-2"></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+}

@@ -1,0 +1,11 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@import '@angular/cdk/overlay-prebuilt.css';
+@import '@perfectmemory/ngx-contextmenu/src/assets/stylesheets/base.scss';
+
+
+button {
+    outline: none !important;
+}
