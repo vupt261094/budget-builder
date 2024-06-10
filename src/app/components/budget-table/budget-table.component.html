@@ -163,29 +163,28 @@
           *ngFor="let month of months(); let i = index"
           class="border px-4 py-2 font-bold"
         >
-          {{ totalIncome()[i] - totalExpenses()[i] }}
+          {{ totalIncome()[i] - totalExpenses()[i] || 0 }}
         </td>
         <td class="border px-4 py-2"></td>
       </tr>
       <tr>
         <td class="border px-4 py-2 font-bold">Opening balance</td>
         <td
-          *ngFor="let month of months(); let i = index"
+          *ngFor="let openingBalance of openingBalance(); let i = index"
           class="border px-4 py-2 font-bold"
         >
-          {{ totalIncome()[i - 1] - totalExpenses()[i - 1] || 0 }}
+          {{ openingBalance }}
         </td>
         <td class="border px-4 py-2"></td>
       </tr>
       <tr>
         <td class="border px-4 py-2 font-bold">Closing balance</td>
         <td
-          *ngFor="let month of months(); let i = index"
+          *ngFor="let closingBalance of closingBalance(); let i = index"
           class="border px-4 py-2 font-bold"
         >
           {{
-            (totalIncome()[i] - totalExpenses()[i] || 0) +
-              ((totalIncome()[i - 1] || 0) - (totalExpenses()[i - 1] || 0))
+            closingBalance
           }}
         </td>
         <td class="border px-4 py-2"></td>

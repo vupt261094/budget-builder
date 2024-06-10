@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { NgForOf } from '@angular/common';
 import { ContextMenuModule } from '@perfectmemory/ngx-contextmenu';
 import { AbsPipe } from '../../pipes/abs.pipe';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-budget-table',
@@ -24,6 +25,8 @@ export class BudgetTableComponent implements OnInit {
   months = signal<string[]>([]);
   totalIncome = signal<any>([]);
   totalExpenses = signal<any>([]);
+  openingBalance = signal<any>([]);
+  closingBalance = signal<any>([]);
   startDate = '';
   endDate = '';
 
@@ -78,7 +81,7 @@ export class BudgetTableComponent implements OnInit {
       this.handleFocusCategoryInput(
         `#category-income-${this.incomeCategories().length - 1}-0`
       );
-    })
+    });
   }
 
   addExpensesCategory() {
@@ -91,7 +94,7 @@ export class BudgetTableComponent implements OnInit {
       this.handleFocusCategoryInput(
         `#category-expenses-${this.expensesCategories().length - 1}-0`
       );
-    })
+    });
   }
 
   deleteIncomeCategory(index: number) {
@@ -125,6 +128,8 @@ export class BudgetTableComponent implements OnInit {
         this.totalIncome.set(temp);
       });
     });
+
+    this.calculateBalance();
   }
 
   calculateTotalExpenses() {
@@ -135,6 +140,23 @@ export class BudgetTableComponent implements OnInit {
         temp[index] += value;
         this.totalExpenses.set(temp);
       });
+    });
+
+    this.calculateBalance();
+  }
+
+  calculateBalance() {
+    this.openingBalance.set(Array(this.months().length).fill(0));
+    this.months().forEach((category: any, index: number) => {
+      const temp = [...this.openingBalance()];
+      const tempClosingBalance = [...this.closingBalance()];
+      temp[index] = !index ? 0 : tempClosingBalance[index - 1];
+      tempClosingBalance[index] =
+        this.totalIncome()[index] -
+        this.totalExpenses()[index] +
+        (temp[index] || 0);
+      this.openingBalance.set(temp);
+      this.closingBalance.set(tempClosingBalance);
     });
   }
 
@@ -199,7 +221,6 @@ export class BudgetTableComponent implements OnInit {
         `#category-income-${rowIdx + 1}-${colIdx + 1}`
       );
     }
-    
   }
 
   handleEnterExpenses(rowIdx: number, colIdx: number) {
@@ -210,6 +231,5 @@ export class BudgetTableComponent implements OnInit {
         `#category-expenses-${rowIdx + 1}-${colIdx + 1}`
       );
     }
-    
   }
 }
