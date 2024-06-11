@@ -161,15 +161,15 @@ export class BudgetTableComponent implements OnInit {
   }
 
   applyToAllIncome(index: number, value: number) {
-    this.incomeCategories().forEach((category: any) => {
-      category.values[index] = value;
+    this.months().forEach((month: string, i: number) => {
+      this.incomeCategories()[index].values[i] = value;
     });
     this.calculateTotalIncome();
   }
 
   applyToAllExpenses(index: number, value: number) {
-    this.expensesCategories().forEach((category: any) => {
-      category.values[index] = value;
+    this.months().forEach((month: string, i: number) => {
+      this.expensesCategories()[index].values[i] = value;
     });
     this.calculateTotalExpenses();
   }
